@@ -1,6 +1,8 @@
 package com.example.lars_peter.babydonthurtme;
 
 import android.content.Context;
+import android.support.v4.view.GestureDetectorCompat;
+import android.view.GestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,8 +15,10 @@ public class ImageAdapter extends BaseAdapter {
 
     private Context mContext;
 
+
     public ImageAdapter(Context c) {
         mContext = c;
+
     }
 
     public int getCount() {
@@ -42,6 +46,7 @@ public class ImageAdapter extends BaseAdapter {
         }
 
         imageView.setImageResource(mThumbIds[position]);
+        imageView.setTag(R.drawable.a1);
         return imageView;
     }
 
@@ -97,9 +102,5 @@ public class ImageAdapter extends BaseAdapter {
             R.drawable.a1, R.drawable.a1,
             R.drawable.a1, R.drawable.a1,
             R.drawable.a1, R.drawable.a1,
-
-
-
-
     };
 }
