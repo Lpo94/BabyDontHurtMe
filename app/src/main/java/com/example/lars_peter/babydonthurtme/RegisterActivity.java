@@ -27,20 +27,24 @@ public class RegisterActivity extends AppCompatActivity {
         String passwordString = password.getText().toString();
         String passwordConfirmString = passwordConfirm.getText().toString();
 
-        if(!passwordString.equals(passwordConfirmString))
-        {
-            Toast nono = Toast.makeText(RegisterActivity.this, "Passwords does not match!", Toast.LENGTH_SHORT);
-            nono.show();
+        if(nameString.length()>0 && nameString.length() < 12) {
+            if (!passwordString.equals(passwordConfirmString)) {
+                Toast nono = Toast.makeText(RegisterActivity.this, "Passwords does not match!", Toast.LENGTH_SHORT);
+                nono.show();
+            } else {
+                Users newUser = new Users();
+                newUser.setName(nameString);
+                newUser.setPassword(passwordString);
+
+                dbManager.AddUser(newUser);
+
+                Toast nono = Toast.makeText(RegisterActivity.this, "Succesfull!", Toast.LENGTH_SHORT);
+                nono.show();
+            }
         }
         else
         {
-            Users newUser = new Users();
-            newUser.setName(nameString);
-            newUser.setPassword(passwordString);
-
-            dbManager.AddUser(newUser);
-
-            Toast nono = Toast.makeText(RegisterActivity.this, "Succesfull!", Toast.LENGTH_SHORT);
+            Toast nono = Toast.makeText(RegisterActivity.this, "Name either too short or too long!", Toast.LENGTH_SHORT);
             nono.show();
         }
     }

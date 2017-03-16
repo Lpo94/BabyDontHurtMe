@@ -15,7 +15,7 @@ public class Enemy {
     private int[] memory;
 
     private boolean shipHit,foundBot,gotDirection,foundTop,shotFired = false;
-    private int shipStart,lastHit,value,checkedDirections,difficulty, okay;
+    private int shipStart,lastHit,value,checkedDirections,difficulty;
     private Context c;
 
     String message = "default message";
@@ -211,7 +211,6 @@ public class Enemy {
                                     }
                                 } else {
                                     foundTop = true;
-                                    checkedDirections++;
                                     lastHit = shipStart;
                                     break;
                                 }
@@ -224,7 +223,6 @@ public class Enemy {
                                     || lastHit == 50 || lastHit == 60 || lastHit == 70 ||
                                     lastHit == 80 || lastHit == 90 || lastHit == 100) {
                                 foundTop = true;
-                                checkedDirections++;
                                 lastHit = shipStart;
                                 break;
                             } else {
@@ -318,8 +316,8 @@ public class Enemy {
 
                 }
 
-        okay++;
-        passToast(c, "Message call count; "+String.valueOf(okay)+ " Position shot at; " + String.valueOf(lastHit)+ " Shot fired; "+ String.valueOf(shotFired)+ " foundBot; "+ String.valueOf(foundBot)+ " foundTop; "+ String.valueOf(foundTop)+" GotDirection: "+ String.valueOf(gotDirection)+ " CheckDirection: "+ String.valueOf(checkedDirections));
+
+        //passToast(c,  " Position shot at; " + String.valueOf(lastHit)+ " Shot fired; "+ String.valueOf(shotFired)+ " foundBot; "+ String.valueOf(foundBot)+ " foundTop; "+ String.valueOf(foundTop)+" GotDirection: "+ String.valueOf(gotDirection)+ " CheckDirection: "+ String.valueOf(checkedDirections));
 
 
         current = null;
