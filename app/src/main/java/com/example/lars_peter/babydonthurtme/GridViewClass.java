@@ -31,6 +31,11 @@ public class GridViewClass extends AppCompatActivity {
     Toast toast;
     int difficutly;
     int lifeCount;
+    int direction = 0;
+    int oldPos;
+    int oldDirection;
+    int oldLenght;
+    boolean firstShipPlaced = false;
 
     GridView gridview;
     Enemy enemy;
@@ -67,6 +72,7 @@ public class GridViewClass extends AppCompatActivity {
                     case 0:
                         switch (shipCount) {
                             case 0:
+
                                 PlaceShip(0, 5, position, gridview);
                                 break;
                             case 1:
@@ -109,6 +115,7 @@ public class GridViewClass extends AppCompatActivity {
     {
         int tempLeng = _length;
         boolean flick = false;
+        _direction = direction;
         ImageView temp;
         if(CheckShipSpace(_direction, _length,_pos,_gridView)) {
             if (_direction == 0) {
@@ -152,6 +159,71 @@ public class GridViewClass extends AppCompatActivity {
                     }
                     temp.setImageResource(R.drawable.d1);
                     temp.setTag(R.drawable.d1);
+                }
+            }
+            lifeCount+= _length;
+        }
+        if(!firstShipPlaced)
+        {
+            firstShipPlaced = true;
+            shipCount++;
+        }
+        else
+        {
+            Removeship(oldDirection, oldLenght, oldPos, _gridView);
+        }
+        oldPos = _pos;
+        oldLenght = _length;
+        oldDirection = _direction;
+    }
+
+    public void Removeship(int _direction, int _length, int _pos, GridView _gridView)
+    {
+        int tempLeng = _length;
+        boolean flick = false;
+        ImageView temp;
+        if(!CheckShipSpace(_direction, _length,_pos,_gridView)) {
+            if (_direction == 0) {
+                //Make sure it's in the GRID
+                for (int i = 0; i < _length; i++) {
+                    // Check if it's in the first Line
+                    // 1
+                    // 10
+                    // 20
+                    if (_pos == 10 || _pos == 20 || _pos == 30 || _pos == 40 || _pos == 50 ||
+                            _pos == 60 || _pos == 70 || _pos == 80 || _pos == 90) {
+                        temp = (ImageView) _gridView.getChildAt(_pos + i);
+                    } else {
+                        //Since it's a 1 Dimensional Array it makes sure that it doesn't start on a new line
+                        if (_pos + i == 10 || _pos + i == 20 || _pos + i == 30 || _pos + i == 40
+                                || _pos + i == 50 || _pos + i == 60 || _pos + i == 70 || _pos + i == 80 ||
+                                _pos + i == 90 || _pos + i == 100 || flick) {
+                            temp = (ImageView) _gridView.getChildAt(_pos - tempLeng);
+                            flick = true;
+                            tempLeng--;
+                        }
+                        // Nothing is wrong, so it just draws the ship
+                        else {
+                            tempLeng--;
+                            temp = (ImageView) _gridView.getChildAt(_pos + i);
+                        }
+                    }
+                    temp.setImageResource(R.drawable.a1);
+                    temp.setTag(R.drawable.a1);
+                }
+            }
+            // Same as Above just for Vertical
+            if (_direction == 1) {
+                for (int i = 0; i < _length; i++) {
+                    if (_pos + (10 * i) > 100) {
+                        temp = (ImageView) _gridView.getChildAt(_pos - (10 * tempLeng));
+                        tempLeng--;
+                    } else {
+                        tempLeng--;
+                        temp = (ImageView) _gridView.getChildAt(_pos + (10 * i));
+                    }
+                    temp.setImageResource(R.drawable.a1);
+                    temp.setTag(R.drawable.a1);
                 }
             }
             shipCount++;
@@ -280,6 +352,16 @@ public class GridViewClass extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    public void placeVertical(View view)
+    {
+        direction = 1;
+    }
+
+    public void placeHorizontal(View view)
+    {
+        direction = 0;
     }
 
     private void passToast(Context context, String message)
