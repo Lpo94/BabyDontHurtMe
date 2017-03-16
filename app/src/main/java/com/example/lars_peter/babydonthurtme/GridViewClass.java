@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
@@ -28,9 +29,9 @@ public class GridViewClass extends AppCompatActivity {
     MediaPlayer mySound;
 
     // 0 = GameSetup, 1 = Game In progress, 2 = Game Done
-    int gameStatus = 0;
+    int gameStatus;
     // 0 = 5, 1 = 4, 2 = 3, 3 = 3, 4 = 2, 5 = 2, 6 Done
-    int shipCount = 0;
+    int shipCount;
     boolean playerTurn = true;
     String message = "default message";
     Toast toast;
@@ -41,6 +42,9 @@ public class GridViewClass extends AppCompatActivity {
     int enemyShipCount;
     int[] lastShip = new int[5];
     boolean firstShipPlaced = false;
+    TextView playerTxt;
+
+    TextView enemyTxt;
 
     GridView gridview;
     GridView enemyGrid;
@@ -52,6 +56,7 @@ public class GridViewClass extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+
         super.onStop();
         pref = this.getSharedPreferences("Grids",MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
@@ -119,44 +124,37 @@ public class GridViewClass extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
+        final Button doneBtn = (Button)findViewById(R.id.doneBtn);
+        doneBtn.setVisibility(View.GONE);
+        //Reseting Values
+        shipCount = 0;
+        gameStatus = 0;
+        enemyLifeCount = 19;
+        firstShipPlaced = false;
+        playerTurn = true;
+
+        playerTxt =(TextView)findViewById(R.id.PlayerTextView);
+        enemyTxt =(TextView)findViewById(R.id.enemyTextView);
+
+        // Set GetSharedpreference so we can get values
         pref = this.getSharedPreferences("Grids",MODE_PRIVATE);
 
-
-
-        //Remove title bar
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-        //Remove notification bar
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        //set content view AFTER ABOVE sequence (to avoid crash)
-        this.setContentView(R.layout.activity_main);
-
-        setContentView(R.layout.activity_main);
+        // Getting the difficulty of the Enemy & Creating it
         Intent intent = getIntent();
         String _string = intent.getStringExtra("EnemyDif");
         difficutly = Integer.valueOf(_string);
+        enemy = new Enemy(difficutly, this, lifeCount);
 
-        enemy = new Enemy(difficutly, this);
-
-
-
+        //Setting Up both Grids
         gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
-        gridview.setVisibility(View.VISIBLE);
-
-
 
         enemyGrid = (GridView)findViewById(R.id.enemygrid);
         enemyGrid.setAdapter(new ImageAdapter(this));
-        enemyGrid.setVisibility(View.VISIBLE);
 
-
-
-
-
-
+        //Method being called Whenever u click an item in given Grid
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -164,6 +162,7 @@ public class GridViewClass extends AppCompatActivity {
                 switch(gameStatus)
                 {
                     case 0:
+                        // Allows u to place ships in the Setup
                             switch (shipCount) {
                                 case 0:
                                     PlaceShip(0, 5, position, gridview);
@@ -194,6 +193,7 @@ public class GridViewClass extends AppCompatActivity {
             }
         });
 
+        //Same as above Just for enemyGrid Instead
         enemyGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -209,7 +209,15 @@ public class GridViewClass extends AppCompatActivity {
                         while(!playerTurn){
                             playerTurn = enemy.EnemyTurn(gridview);
                         }
+                        if(enemy.playerLife == 0 || enemyLifeCount == 0)
+                        {
+                            gameStatus++;
+                            GameReview(enemyGrid);
+                            doneBtn.setVisibility(View.VISIBLE);
+                        }
 
+                        enemyTxt.setText("Enemy:" + String.valueOf(enemyLifeCount));
+                        playerTxt.setText("Player: " + String.valueOf(enemy.playerLife));
                         break;
 
                 }
@@ -218,24 +226,30 @@ public class GridViewClass extends AppCompatActivity {
     }
 
 
-    // 0 = Vertical          1 = Horizontal
+    // 0 = Horizontal          1 = Vertical
     public boolean PlaceShip(int _direction, int _length, int _pos, GridView _gridView)
     {
+        // Reseting values per ship
         int tempLeng = _length;
         int fix;
         boolean flick = false;
         _direction = direction;
         ImageView temp;
+
+        //Checks if Ship can be placed
         if(CheckShipSpace(_direction, _length,_pos,_gridView)) {
+            //Makes sure the first ship doesn't get removed or cause a null reference
             if(!firstShipPlaced)
             {
                 firstShipPlaced = true;
             }
             else
+            //Removes the last placed ship, unless the ship have been confirmed
             {if(shipCount != 6) {
                 Removeship(_gridView);
             }
             }
+            //Places Ship Horizontal
             if (_direction == 0) {
                 //Make sure it's in the GRID
                 for (int i = 0; i < _length; i++) {
@@ -264,7 +278,11 @@ public class GridViewClass extends AppCompatActivity {
                             temp = (ImageView) _gridView.getChildAt(fix);
                         }
                     }
+                    // Keeps track of the last ship placed
                     lastShip[i] = fix;
+
+                    //If all player ships have been placed the enemy method is called, and since
+                    // we don't want players to see where the enemy have placed their ships
                     if(shipCount != 6) {
                         temp.setImageResource(R.drawable.d1);
                     }
@@ -299,6 +317,7 @@ public class GridViewClass extends AppCompatActivity {
 
     }
 
+    //Removes Last ship place
     public void Removeship(GridView _gridView)
     {
         for(int i = 0; i < lastShip.length; i++)
@@ -309,7 +328,7 @@ public class GridViewClass extends AppCompatActivity {
         }
     }
 
-    //Copy of PlaceShip Just Doesn't change the image
+    //Places all enemy ships
     public void EnemyShip(GridView _gridView)
     {
        while(enemyShipCount < 6)
@@ -353,7 +372,8 @@ public class GridViewClass extends AppCompatActivity {
        }
     }
 
-    // 0 = Vertical          1 = Horizontal
+    // 0 = Horizontal          1 = Vertical
+    // Makes sure a ship can be placed from given position
     public boolean CheckShipSpace(int _direction, int _length, int _pos, GridView _gridView)
     {
         int tempLeng = _length;
@@ -405,25 +425,30 @@ public class GridViewClass extends AppCompatActivity {
         return true;
     }
 
+    //Handles SHooting
     public boolean TakeShot(int _pos, GridView _gridView)
     {
       ImageView temp = (ImageView)_gridView.getChildAt(_pos);
+        //Miss
         if((int)temp.getTag() == R.drawable.a1)
         {
             temp.setTag(R.drawable.c1);
             temp.setImageResource(R.drawable.c1);
             return false;
         }
+        //Hit
         else if((int)temp.getTag() == R.drawable.d1)
         {
             temp.setTag(R.drawable.b1);
             temp.setImageResource(R.drawable.b1);
+            enemyLifeCount--;
             return false;
         }
 
         return true;
     }
 
+    // So The Player can place Vertical and Horizontal
     public void SwapDirection(View view)
     {
         Button btn = (Button)findViewById(R.id.switchButton);
@@ -438,19 +463,24 @@ public class GridViewClass extends AppCompatActivity {
         }
     }
 
+    //Makes a simpe text Toast
     private void passToast(Context context, String message)
     {
         toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
         toast.show();
     }
 
+    //Locks in the ship
     public void ConfirmPlacement(View view)
     {
+        //Prepare for next ship getting placed
         if(firstShipPlaced) {
             firstShipPlaced = false;
             lastShip = new int[5];
             shipCount++;
+            passToast(this, "Ship Placement Confirmed");
         }
+        //Makes the game procced after last ship Placed
         if(shipCount == 6)
         {
             EnemyShip(enemyGrid);
@@ -461,6 +491,36 @@ public class GridViewClass extends AppCompatActivity {
             tempBtn.setVisibility(View.GONE);
         }
     }
+
+    public void GameEnd(View view)
+    {
+        Intent intent = new Intent(this,Menu.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void GameReview(GridView _gridView)
+    {
+        if(enemy.playerLife == 0)
+        {
+            passToast(this, "YOU LOST!");
+        }
+        else if(enemyLifeCount == 0)
+        {
+            passToast(this, "YOU'VE WON!");
+        }
+
+        for(int i = 0; i < 100; i++)
+        {
+            ImageView view = (ImageView)_gridView.getChildAt(i);
+            if((int)view.getTag() == R.drawable.d1)
+            {
+                view.setImageResource(R.drawable.d1);
+            }
+        }
+    }
+
+
 
 
 

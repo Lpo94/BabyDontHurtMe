@@ -16,6 +16,7 @@ public class Enemy {
 
     private boolean shipHit,foundBot,gotDirection,foundTop,shotFired = false;
     private int shipStart,lastHit,value,checkedDirections,difficulty;
+    public int playerLife;
     private Context c;
 
     String message = "default message";
@@ -25,11 +26,12 @@ public class Enemy {
     Random r = new Random();
 
 
-    public Enemy(int _difficulty, Context _c)
+    public Enemy(int _difficulty, Context _c, int _playerLife)
     {
         memory = new int[100];
         difficulty = _difficulty;
         c = _c;
+        playerLife = _playerLife;
     }
 
     // 0 1 2 3 4 5 6 7 8 9
@@ -309,7 +311,6 @@ public class Enemy {
                     lastHit = 0;
                     value = 0;
                     checkedDirections = 0;
-                    passToast(c, "Kill ship");
 
                 }
             }
@@ -337,6 +338,7 @@ public class Enemy {
         {
             temp.setTag(R.drawable.b1);
             temp.setImageResource(R.drawable.b1);
+            playerLife --;
             return true;
         }
 

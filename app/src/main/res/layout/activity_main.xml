@@ -75,6 +75,7 @@
         android:layout_alignLeft="@+id/gridview"
         android:layout_below="@+id/gridview"
         android:text="Player"
+        android:layout_marginTop="-80dp"
         android:textSize="24sp" />
 
     <TextView
@@ -85,6 +86,17 @@
         android:layout_alignRight="@+id/enemygrid"
         android:layout_below="@+id/gridview"
         android:text="Enemy"
+        android:layout_marginTop="-80dp"
         android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/doneBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="GameEnd"
+        android:text="Back to Menu"
+        android:layout_marginBottom="12dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
