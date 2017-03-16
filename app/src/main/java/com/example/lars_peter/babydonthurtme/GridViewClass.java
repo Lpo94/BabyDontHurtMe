@@ -1,8 +1,10 @@
 package com.example.lars_peter.babydonthurtme;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,24 +15,37 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 
 public class GridViewClass extends AppCompatActivity {
+
+    MediaPlayer mySound;
 
     // 0 = GameSetup, 1 = Game In progress, 2 = Game Done
     int gameStatus = 0;
     // 0 = 5, 1 = 4, 2 = 3, 3 = 3, 4 = 2, 5 = 2, 6 Done
     int shipCount = 0;
     boolean playerTurn = true;
+    String message = "default message";
+    Toast toast;
+    int difficutly;
+    int lifeCount;
 
     GridView gridview;
-    Enemy enemy = new Enemy(1);
+    Enemy enemy;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
+        String  _string = intent.getStringExtra("EnemyDif");
+
+        enemy = new Enemy(difficutly, this);
+
+
 
         gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new ImageAdapter(this));
@@ -78,7 +93,7 @@ public class GridViewClass extends AppCompatActivity {
                         if(playerTurn) {
                             playerTurn = TakeShot(position, gridview);
                         }
-                        if(!playerTurn){
+                        while(!playerTurn){
                             playerTurn = enemy.EnemyTurn(gridview);
                         }
                         break;
@@ -140,6 +155,7 @@ public class GridViewClass extends AppCompatActivity {
                 }
             }
             shipCount++;
+            lifeCount+= _length;
         }
     }
 
@@ -264,6 +280,12 @@ public class GridViewClass extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void passToast(Context context, String message)
+    {
+        toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+        toast.show();
     }
 
 

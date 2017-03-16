@@ -10,15 +10,20 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GridViewClass" />
-        <activity android:name=".RegisterActivity"></activity>
+        <activity android:name=".Menu" />
+        <activity
+            android:name=".GridViewClass"
+            android:screenOrientation="landscape" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".SoundActivity" />
+        <activity android:name=".DifficultyActivity"></activity>
     </application>
 
 </manifest>

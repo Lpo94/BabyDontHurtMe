@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
             if(passwordString.equals(pw))
             {
-                Intent gameMenuGo = new Intent(this, GridViewClass.class);
+                Intent gameMenuGo = new Intent(this, Menu.class);
                 startActivity(gameMenuGo);
             }
 
