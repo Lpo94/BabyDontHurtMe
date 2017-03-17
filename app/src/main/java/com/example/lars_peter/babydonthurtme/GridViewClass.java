@@ -504,6 +504,23 @@ public class GridViewClass extends AppCompatActivity {
         finish();
     }
 
+    public void Music(View view)
+    {
+        Button musicButton = (Button)findViewById(R.id.muteButton);
+        if(!Menu.musicPaused) {
+            musicButton.setText("Unmute");
+            Menu.music.setVolume(0, 0);
+            Menu.musicPaused = true;
+        }
+
+        else
+        {
+            musicButton.setText("Mute");
+            Menu.music.setVolume(1,1);
+            Menu.musicPaused = false;
+        }
+    }
+
     public void GameReview(GridView _gridView)
     {
         if(enemy.playerLife == 0)

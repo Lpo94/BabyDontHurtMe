@@ -6,10 +6,14 @@ import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 public class Menu extends AppCompatActivity {
 
-    MediaPlayer music;
+    static MediaPlayer music;
+    static int paused;
+    Button musicButton;
+    static boolean musicPaused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +33,28 @@ public class Menu extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        if(music==null) {
             super.onStart();
             if (music == null) {
                 music = MediaPlayer.create(this, R.raw.music);
                 music.setLooping(true);
                 music.start();
             }
+    }
+
+    public void Music(View view)
+    {
+        musicButton = (Button) findViewById(R.id.musicButton);
+        if(musicPaused == false) {
+            musicButton.setText("Unpause music");
+            musicPaused = true;
+            music.pause();
+            paused=music.getCurrentPosition();
+        }
+        else if(musicPaused == true)
+        {
+            music.start();
+            musicButton.setText("Pause music");
+            musicPaused = false;
         }
     }
 }
