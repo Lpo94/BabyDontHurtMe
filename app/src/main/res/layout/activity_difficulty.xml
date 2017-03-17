@@ -35,6 +35,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="88dp"
+        android:onClick="Back"
         android:text="Back to menu" />
 
 </RelativeLayout>

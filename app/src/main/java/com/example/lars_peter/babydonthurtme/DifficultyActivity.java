@@ -26,4 +26,9 @@ public class DifficultyActivity extends AppCompatActivity {
         i.putExtra("EnemyDif", "1");
         startActivity(i);
     }
+
+    public void Back(View view)
+    {
+        finish();
+    }
 }

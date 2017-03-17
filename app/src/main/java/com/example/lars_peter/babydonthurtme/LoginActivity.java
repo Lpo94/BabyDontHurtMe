@@ -1,6 +1,7 @@
 package com.example.lars_peter.babydonthurtme;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
+    MediaPlayer mySound;
     DatabaseManager dbManager = new DatabaseManager(this);
 
     @Override
@@ -18,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
     }
+
 
     public void RegisterClicked(View view)
     {

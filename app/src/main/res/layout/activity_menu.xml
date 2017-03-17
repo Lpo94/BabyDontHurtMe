@@ -20,22 +20,11 @@
         tools:layout_editor_absoluteY="97dp" />
 
     <Button
-        android:id="@+id/soundButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/startButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:text="Sound" />
-
-    <Button
         android:id="@+id/exitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/soundButton"
-        android:layout_alignStart="@+id/soundButton"
-        android:layout_below="@+id/soundButton"
-        android:layout_marginTop="55dp"
-        android:onClick="Exit"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:onClick="Back"
         android:text="Exit" />
 </RelativeLayout>

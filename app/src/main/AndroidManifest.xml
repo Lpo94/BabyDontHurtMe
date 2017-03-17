@@ -9,6 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity
+            android:noHistory="true"
             android:name=".LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -22,7 +23,6 @@
             android:name=".GridViewClass"
             android:screenOrientation="landscape" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".SoundActivity" />
         <activity android:name=".DifficultyActivity"></activity>
     </application>
 

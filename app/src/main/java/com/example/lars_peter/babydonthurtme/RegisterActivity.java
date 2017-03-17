@@ -51,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void BackClicked(View view)
     {
-        Intent loginGo = new Intent(this, LoginActivity.class);
-        startActivity(loginGo);
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
     }
 }

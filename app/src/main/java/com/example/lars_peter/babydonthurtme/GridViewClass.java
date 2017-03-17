@@ -43,6 +43,7 @@ public class GridViewClass extends AppCompatActivity {
     int[] lastShip = new int[5];
     boolean firstShipPlaced = false;
     TextView playerTxt;
+    MediaPlayer shots;
 
     TextView enemyTxt;
 
@@ -432,6 +433,8 @@ public class GridViewClass extends AppCompatActivity {
         //Miss
         if((int)temp.getTag() == R.drawable.a1)
         {
+            shots = MediaPlayer.create(this, R.raw.miss);
+            shots.start();
             temp.setTag(R.drawable.c1);
             temp.setImageResource(R.drawable.c1);
             return false;
@@ -439,6 +442,8 @@ public class GridViewClass extends AppCompatActivity {
         //Hit
         else if((int)temp.getTag() == R.drawable.d1)
         {
+            shots = MediaPlayer.create(this, R.raw.hit);
+            shots.start();
             temp.setTag(R.drawable.b1);
             temp.setImageResource(R.drawable.b1);
             enemyLifeCount--;
