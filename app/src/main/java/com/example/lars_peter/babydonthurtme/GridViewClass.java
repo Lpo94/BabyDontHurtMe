@@ -434,6 +434,7 @@ public class GridViewClass extends AppCompatActivity {
         if((int)temp.getTag() == R.drawable.a1)
         {
             shots = MediaPlayer.create(this, R.raw.miss);
+            shots.setVolume(0.5f, 0.5f);
             shots.start();
             temp.setTag(R.drawable.c1);
             temp.setImageResource(R.drawable.c1);
@@ -443,6 +444,7 @@ public class GridViewClass extends AppCompatActivity {
         else if((int)temp.getTag() == R.drawable.d1)
         {
             shots = MediaPlayer.create(this, R.raw.hit);
+            shots.setVolume(0.5f, 0.5f);
             shots.start();
             temp.setTag(R.drawable.b1);
             temp.setImageResource(R.drawable.b1);

@@ -14,6 +14,8 @@ public class Menu extends AppCompatActivity {
     static int paused;
     Button musicButton;
     static boolean musicPaused;
+    static int maxVolume = 50;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class Menu extends AppCompatActivity {
             if (music == null) {
                 music = MediaPlayer.create(this, R.raw.music);
                 music.setLooping(true);
+                music.setVolume(0.1f, 0.1f);
                 music.start();
             }
     }
