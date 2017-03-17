@@ -14,6 +14,7 @@ public class LoginActivity extends AppCompatActivity {
 
     MediaPlayer mySound;
     DatabaseManager dbManager = new DatabaseManager(this);
+    static String playerName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             {
                 Intent gameMenuGo = new Intent(this, Menu.class);
                 startActivity(gameMenuGo);
+                playerName = nameString;
             }
 
             else

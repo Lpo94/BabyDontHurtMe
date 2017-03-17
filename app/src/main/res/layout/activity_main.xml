@@ -67,6 +67,16 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
+    <Button
+        android:id="@+id/NextPlayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="NextTurn"
+        android:text="Next Turn"
+        android:layout_marginBottom="12dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
     <TextView
         android:id="@+id/PlayerTextView"
 

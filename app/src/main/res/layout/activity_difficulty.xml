@@ -10,32 +10,51 @@
         android:id="@+id/easyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="69dp"
         android:onClick="Easy"
         android:text="Cry baby"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/hardButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/easyButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="46dp"
+        android:layout_marginTop="14dp"
         android:onClick="Hard"
         android:text="I actually want a challenge"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:layout_below="@+id/easyButton"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/YOLO"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="DontDoThisAtHomeKids"
+        android:text="What did i just witness ?"
+        android:textSize="18sp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/MultiplayerBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="Multiplayer"
+        android:text="Play with a Friend"
+        android:textSize="18sp"
+        android:layout_below="@+id/YOLO"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="Back"
+        android:text="Back to menu"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="88dp"
-        android:onClick="Back"
-        android:text="Back to menu" />
+        android:layout_marginBottom="7dp" />
 
 </RelativeLayout>

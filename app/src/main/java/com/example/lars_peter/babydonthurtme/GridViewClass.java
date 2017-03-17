@@ -3,21 +3,14 @@ package com.example.lars_peter.babydonthurtme;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,24 +19,28 @@ import java.util.Random;
 
 public class GridViewClass extends AppCompatActivity {
 
-    MediaPlayer mySound;
 
     // 0 = GameSetup, 1 = Game In progress, 2 = Game Done
     int gameStatus;
     // 0 = 5, 1 = 4, 2 = 3, 3 = 3, 4 = 2, 5 = 2, 6 Done
     int shipCount;
     boolean playerTurn = true;
-    String message = "default message";
     Toast toast;
     int difficutly;
     int lifeCount = 19;
     int direction = 0;
+    Random r;
     int enemyLifeCount = 19;
     int enemyShipCount;
     int[] lastShip = new int[5];
     boolean firstShipPlaced = false;
+    boolean player1Turn = true;
+    boolean PvP_NextTurn;
+    boolean PvP = false;
     TextView playerTxt;
     MediaPlayer shots;
+
+    Button nextBtn;
 
     TextView enemyTxt;
 
@@ -51,76 +48,9 @@ public class GridViewClass extends AppCompatActivity {
     GridView enemyGrid;
     Enemy enemy;
 
-    private SharedPreferences pref;
 
 
 
-    @Override
-    protected void onStop() {
-
-        super.onStop();
-        pref = this.getSharedPreferences("Grids",MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-
-        for(int i = 0; i < 100; i++) {
-            int tag = (int)enemyGrid.getChildAt(i).getTag();
-
-            switch (tag)
-            {
-                case R.drawable.a1:
-                    editor.putInt("Enemy"+i, 0);
-                    break;
-                case R.drawable.b1:
-                    editor.putInt("Enemy"+i, 1);
-                    break;
-                case R.drawable.c1:
-                    editor.putInt("Enemy"+i, 2);
-                    break;
-                case R.drawable.d1:
-                    editor.putInt("Enemy"+i, 3);
-                    break;
-            }
-
-            tag = (int)gridview.getChildAt(i).getTag();
-
-            switch (tag)
-            {
-                case R.drawable.a1:
-                    editor.putInt("Player"+i, 0);
-                    break;
-                case R.drawable.b1:
-                    editor.putInt("Player"+i, 1);
-                    break;
-                case R.drawable.c1:
-                    editor.putInt("Player"+i, 2);
-                    break;
-                case R.drawable.d1:
-                    editor.putInt("Player"+i, 3);
-                    break;
-            }
-
-
-        }
-
-        passToast(this, String.valueOf(pref.getInt("Player1",-1)));
-        editor.commit();
-    }
-
-    private void readSharedPref()
-    {
-        pref = this.getSharedPreferences("Grids",MODE_PRIVATE);
-        int check = pref.getInt("Enemy0",-1);
-        if(check != 0)
-        {
-            for(int i = 0; i < 100; i++)
-            {
-                gridview.getChildAt(i).setTag(pref.getInt("Player"+i,R.drawable.a1));
-                ImageView img = (ImageView)gridview.getChildAt(i);
-                img.setImageResource(pref.getInt("Player"+i,R.drawable.a1));
-            }
-            passToast(this, "Loaded");
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -129,7 +59,10 @@ public class GridViewClass extends AppCompatActivity {
 
         final Button doneBtn = (Button)findViewById(R.id.doneBtn);
         doneBtn.setVisibility(View.GONE);
-        //Reseting Values
+
+        nextBtn = (Button)findViewById(R.id.NextPlayer);
+        nextBtn.setVisibility(View.GONE);
+        //Resetting Values
         shipCount = 0;
         gameStatus = 0;
         enemyLifeCount = 19;
@@ -139,14 +72,22 @@ public class GridViewClass extends AppCompatActivity {
         playerTxt =(TextView)findViewById(R.id.PlayerTextView);
         enemyTxt =(TextView)findViewById(R.id.enemyTextView);
 
-        // Set GetSharedpreference so we can get values
-        pref = this.getSharedPreferences("Grids",MODE_PRIVATE);
+        playerTxt.setText(LoginActivity.playerName);
+
 
         // Getting the difficulty of the Enemy & Creating it
         Intent intent = getIntent();
         String _string = intent.getStringExtra("EnemyDif");
         difficutly = Integer.valueOf(_string);
-        enemy = new Enemy(difficutly, this, lifeCount);
+
+        if(difficutly < 10) {
+            enemy = new Enemy(difficutly, this, lifeCount);
+        }
+        else
+        {
+            PvP = true;
+        }
+
 
         //Setting Up both Grids
         gridview = (GridView) findViewById(R.id.gridview);
@@ -163,31 +104,50 @@ public class GridViewClass extends AppCompatActivity {
                 switch(gameStatus)
                 {
                     case 0:
-                        // Allows u to place ships in the Setup
+                        if(player1Turn) {
+                            // Allows u to place ships in the Setup
                             switch (shipCount) {
                                 case 0:
-                                    PlaceShip(0, 5, position, gridview);
+                                    PlaceShip(direction, 5, position, gridview);
                                     break;
                                 case 1:
-                                    PlaceShip(0, 4, position, gridview);
+                                    PlaceShip(direction, 4, position, gridview);
                                     break;
                                 case 2:
-                                    PlaceShip(0, 3, position, gridview);
+                                    PlaceShip(direction, 3, position, gridview);
                                     break;
                                 case 3:
-                                    PlaceShip(0, 3, position, gridview);
+                                    PlaceShip(direction, 3, position, gridview);
                                     break;
                                 case 4:
-                                    PlaceShip(0, 2, position, gridview);
+                                    PlaceShip(direction, 2, position, gridview);
                                     break;
                                 case 5:
-                                    PlaceShip(0, 2, position, gridview);
+                                    PlaceShip(direction, 2, position, gridview);
                                     break;
                             }
+                        }
+
 
                     break;
 
                     case 1:
+                        if(PvP && !player1Turn)
+                        {
+                            if(!TakeShot(position,gridview)) {
+                                player1Turn = true;
+                                nextBtn.setVisibility(View.VISIBLE);
+                                SwapPlayerGrid(enemyGrid, true);
+                                enemyTxt.setText("Player2:" + String.valueOf(enemyLifeCount));
+                                playerTxt.setText(LoginActivity.playerName + ": " + lifeCount);
+
+                                if (lifeCount == 0) {
+                                    gameStatus++;
+                                    GameReview(enemyGrid);
+                                    doneBtn.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
                         break;
                 }
 
@@ -201,24 +161,66 @@ public class GridViewClass extends AppCompatActivity {
                 switch(gameStatus)
                 {
                     case 0:
+                        if(!player1Turn)
+                        {
+                            switch (shipCount) {
+                                case 0:
+                                    PlaceShip(direction, 5, position, enemyGrid);
+                                    break;
+                                case 1:
+                                    PlaceShip(direction, 4, position, enemyGrid);
+                                    break;
+                                case 2:
+                                    PlaceShip(direction, 3, position, enemyGrid);
+                                    break;
+                                case 3:
+                                    PlaceShip(direction, 3, position, enemyGrid);
+                                    break;
+                                case 4:
+                                    PlaceShip(direction, 2, position, enemyGrid);
+                                    break;
+                                case 5:
+                                    PlaceShip(direction, 2, position, enemyGrid);
+                                    break;
+                            }
+                        }
 
                         break;
                     case 1:
-                        if(playerTurn) {
-                            playerTurn = TakeShot(position, enemyGrid);
-                        }
-                        while(!playerTurn){
-                            playerTurn = enemy.EnemyTurn(gridview);
-                        }
-                        if(enemy.playerLife == 0 || enemyLifeCount == 0)
-                        {
-                            gameStatus++;
-                            GameReview(enemyGrid);
-                            doneBtn.setVisibility(View.VISIBLE);
+                        if(!PvP) {
+                            if (playerTurn) {
+                                playerTurn = TakeShot(position, enemyGrid);
+                            }
+                            while (!playerTurn) {
+                                playerTurn = enemy.EnemyTurn(gridview);
+                            }
+                            if (enemy.playerLife == 0 || enemyLifeCount == 0) {
+                                gameStatus++;
+                                GameReview(enemyGrid);
+                                doneBtn.setVisibility(View.VISIBLE);
+                            }
+
+                            enemyTxt.setText("Enemy AI:" + String.valueOf(enemyLifeCount));
+                            playerTxt.setText(LoginActivity.playerName + ": " + String.valueOf(enemy.playerLife));
                         }
 
-                        enemyTxt.setText("Enemy:" + String.valueOf(enemyLifeCount));
-                        playerTxt.setText("Player: " + String.valueOf(enemy.playerLife));
+                        if(PvP && player1Turn)
+                        {
+                            if(!TakeShot(position,enemyGrid)) {
+                                player1Turn = false;
+                                nextBtn.setVisibility(View.VISIBLE);
+                                SwapPlayerGrid(gridview, true);
+
+                                enemyTxt.setText("Player2:" + String.valueOf(enemyLifeCount));
+                                playerTxt.setText(LoginActivity.playerName + ": " + lifeCount);
+
+                                if (enemyLifeCount == 0) {
+                                    gameStatus++;
+                                    GameReview(enemyGrid);
+                                    doneBtn.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
                         break;
 
                 }
@@ -234,7 +236,6 @@ public class GridViewClass extends AppCompatActivity {
         int tempLeng = _length;
         int fix;
         boolean flick = false;
-        _direction = direction;
         ImageView temp;
 
         //Checks if Ship can be placed
@@ -247,7 +248,7 @@ public class GridViewClass extends AppCompatActivity {
             else
             //Removes the last placed ship, unless the ship have been confirmed
             {if(shipCount != 6) {
-                Removeship(_gridView);
+                RemoveShip(_gridView,_length);
             }
             }
             //Places Ship Horizontal
@@ -319,9 +320,9 @@ public class GridViewClass extends AppCompatActivity {
     }
 
     //Removes Last ship place
-    public void Removeship(GridView _gridView)
+    public void RemoveShip(GridView _gridView, int _length)
     {
-        for(int i = 0; i < lastShip.length; i++)
+        for(int i = 0; i < _length; i++)
         {
             ImageView temp = (ImageView)_gridView.getChildAt(lastShip[i]);
             temp.setImageResource(R.drawable.a1);
@@ -334,42 +335,81 @@ public class GridViewClass extends AppCompatActivity {
     {
        while(enemyShipCount < 6)
        {
-           Random r = new Random();
+           r = new Random();
            int temp = r.nextInt(99);
-           int tempdir = r.nextInt(1);
+           int tempDirection = r.nextInt(10);
+           // The Random wasn't working with a number between 0,1 so we mixed it up
+           switch (tempDirection)
+           {
+               case 0:
+                   tempDirection = 0;
+                   break;
+               case 1:
+                   tempDirection = 0;
+                   break;
+               case 2:
+                   tempDirection = 0;
+                   break;
+               case 3:
+                   tempDirection = 0;
+                   break;
+               case 4:
+                   tempDirection = 0;
+                   break;
+               case 5:
+                   tempDirection = 1;
+                   break;
+               case 6:
+                   tempDirection = 1;
+                   break;
+               case 7:
+                   tempDirection = 1;
+                   break;
+               case 8:
+                   tempDirection = 1;
+                   break;
+               case 9:
+                   tempDirection = 1;
+                   break;
+
+               case 10:
+                   tempDirection = 1;
+                   break;
+           }
 
            switch (enemyShipCount) {
                case 0:
-                   if(PlaceShip(tempdir, 5, temp, _gridView)) {
+                   if(PlaceShip(tempDirection, 5, temp, _gridView)) {
                        enemyShipCount++;
                    }
                    break;
                case 1:
-                   if(PlaceShip(tempdir, 4, temp, _gridView)) {
+                   if(PlaceShip(tempDirection, 4, temp, _gridView)) {
                        enemyShipCount++;
                    }
                    break;
                case 2:
-                   if(PlaceShip(tempdir, 3, temp, _gridView)) {
+                   if(PlaceShip(tempDirection, 3, temp, _gridView)) {
                        enemyShipCount++;
                    }
                    break;
                case 3:
-                   if(PlaceShip(tempdir, 3, temp, _gridView)) {
+                   if(PlaceShip(tempDirection, 3, temp, _gridView)) {
                        enemyShipCount++;
                    }
                    break;
                case 4:
-                   if(PlaceShip(tempdir, 2, temp, _gridView)) {
+                   if(PlaceShip(tempDirection, 2, temp, _gridView)) {
                        enemyShipCount++;
                    }
                    break;
                case 5:
-                   if(PlaceShip(tempdir, 2, temp, _gridView)) {
+                   if(PlaceShip(tempDirection, 2, temp, _gridView)) {
                        enemyShipCount++;
                    }
                    break;
            }
+
        }
     }
 
@@ -448,7 +488,16 @@ public class GridViewClass extends AppCompatActivity {
             shots.start();
             temp.setTag(R.drawable.b1);
             temp.setImageResource(R.drawable.b1);
-            enemyLifeCount--;
+            if(!PvP) {
+                enemyLifeCount--;
+            }
+            else if(PvP && player1Turn)
+            {
+                enemyLifeCount--;
+            }
+            else if(PvP && !player1Turn){
+                lifeCount--;
+            }
             return false;
         }
 
@@ -485,10 +534,10 @@ public class GridViewClass extends AppCompatActivity {
             firstShipPlaced = false;
             lastShip = new int[5];
             shipCount++;
-            passToast(this, "Ship Placement Confirmed");
+
         }
         //Makes the game procced after last ship Placed
-        if(shipCount == 6)
+        if(shipCount == 6 && !PvP)
         {
             EnemyShip(enemyGrid);
             gameStatus++;
@@ -496,6 +545,24 @@ public class GridViewClass extends AppCompatActivity {
             tempBtn.setVisibility(View.GONE);
             tempBtn = (Button)findViewById(R.id.placeButton);
             tempBtn.setVisibility(View.GONE);
+        }
+        else if(PvP && shipCount == 6 && player1Turn)
+        {
+            shipCount = 0;
+            player1Turn = false;
+            passToast(this, "Player 2!");
+            SwapPlayerGrid(gridview,true);
+        }
+        else if(PvP && shipCount == 6 && !player1Turn)
+        {
+            gameStatus++;
+            player1Turn = true;
+            SwapPlayerGrid(enemyGrid,true);
+            Button tempBtn = (Button)findViewById(R.id.switchButton);
+            tempBtn.setVisibility(View.GONE);
+            tempBtn = (Button)findViewById(R.id.placeButton);
+            tempBtn.setVisibility(View.GONE);
+            nextBtn.setVisibility(View.VISIBLE);
         }
     }
 
@@ -523,32 +590,81 @@ public class GridViewClass extends AppCompatActivity {
         }
     }
 
-    public void GameReview(GridView _gridView)
+    public void NextTurn(View view)
     {
-        if(enemy.playerLife == 0)
+        if(player1Turn)
         {
-            passToast(this, "YOU LOST!");
+            SwapPlayerGrid(gridview,false);
         }
-        else if(enemyLifeCount == 0)
+        else if(!player1Turn)
         {
-            passToast(this, "YOU'VE WON!");
+            SwapPlayerGrid(enemyGrid,false);
         }
 
-        for(int i = 0; i < 100; i++)
-        {
-            ImageView view = (ImageView)_gridView.getChildAt(i);
-            if((int)view.getTag() == R.drawable.d1)
-            {
-                view.setImageResource(R.drawable.d1);
+        nextBtn.setVisibility(View.GONE);
+    }
+
+    public void GameReview(GridView _gridView)
+    {
+        if(!PvP) {
+            if (enemy.playerLife == 0) {
+                passToast(this, "YOU LOST!");
+            } else if (enemyLifeCount == 0) {
+                passToast(this, "YOU'VE WON!");
             }
+
+            SwapPlayerGrid(_gridView, false);
+        }
+        else if(PvP)
+        {
+            if (lifeCount == 0) {
+                passToast(this, "PLAYER 2 WON!");
+            } else if (enemyLifeCount == 0) {
+                passToast(this, "PLAYER 1 WON!");
+            }
+
+            SwapPlayerGrid(gridview, false);
+            SwapPlayerGrid(enemyGrid, false);
         }
     }
 
+    public void SwapPlayerGrid(GridView _gridView, Boolean _hide)
+    {
+        if(_hide) {
 
+            for (int i = 0; i < 100; i++) {
+                ImageView img = (ImageView) _gridView.getChildAt(i);
+                if ((int) img.getTag() == R.drawable.d1) {
+                    img.setImageResource(R.drawable.a1);
+                }
+            }
+        }
+        else if(!_hide)
+        {
+            for (int i = 0; i < 100; i++) {
+                ImageView img = (ImageView) _gridView.getChildAt(i);
+                if ((int) img.getTag() == R.drawable.d1) {
+                    img.setImageResource(R.drawable.d1);
+                }
+            }
+        }
 
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!Menu.musicPaused) {
+            Music(null);
+        }
+    }
 
-
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(Menu.musicPaused) {
+            Music(null);
+        }
+    }
 }
 

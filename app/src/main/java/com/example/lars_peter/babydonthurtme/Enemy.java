@@ -314,7 +314,23 @@ public class Enemy {
 
                 }
             }
+            case 3:
+                while (current == null) {
+                    value = r.nextInt(99);
+                    ImageView v = (ImageView)gridView.getChildAt(value);
+                    if (memory[value] == 0) {
+                        memory[value] = 1;
+                        if ((int)v.getTag() == R.drawable.d1) {
+                            break;
 
+                        }
+                    }
+                    current = null;
+                }
+                TakeShot(value,gridView);
+                shotFired = true;
+
+                break;
                 }
 
 

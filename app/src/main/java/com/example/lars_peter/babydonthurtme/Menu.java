@@ -14,7 +14,6 @@ public class Menu extends AppCompatActivity {
     static int paused;
     Button musicButton;
     static boolean musicPaused;
-    static int maxVolume = 50;
 
 
     @Override

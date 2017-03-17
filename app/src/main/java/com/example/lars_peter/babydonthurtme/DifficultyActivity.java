@@ -27,6 +27,20 @@ public class DifficultyActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    public void DontDoThisAtHomeKids(View view)
+    {
+        Intent i = new Intent(this, GridViewClass.class);
+        i.putExtra("EnemyDif", "3");
+        startActivity(i);
+    }
+
+    public void Multiplayer(View view)
+    {
+        Intent i = new Intent(this, GridViewClass.class);
+        i.putExtra("EnemyDif", "99999");
+        startActivity(i);
+    }
+
     public void Back(View view)
     {
         finish();
